@@ -9,3 +9,9 @@ adminRouter.get('/', AdminController.obtenerTodos);
 adminRouter.get('/:id', AdminController.obtenerPorId);
 
 adminRouter.post('/', AdminController.crearMedico);
+
+adminRouter.delete('/:id', AdminController.eliminarMedico);
+
+adminRouter.put('/:id', AdminController.actualizarMedico);
+ 
+ 
