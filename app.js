@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken'
 import { adminRouter } from './routes/routes.js';
 import { medicoRouter } from './routes/routes.js';
 import { authRouter } from './routes/routes.js';
