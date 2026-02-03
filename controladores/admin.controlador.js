@@ -2,7 +2,7 @@ import { ModeloAdmin } from "../modelo/admin.modelo.js";
 
 export class AdminController {
     static async obtenerTodos (req, res) {
-        console.log("intento de acceso");
+        console.log("intento de acceso try");
         const admins = await ModeloAdmin.obtenerTodos()
         res.json(admins)   
     }
@@ -20,8 +20,12 @@ export class AdminController {
 
     static async eliminarMedico (req, res) {
         const { id } = req.params;
-        await ModeloAdmin.eliminarMedico({id});
-        res.status(204).send()
+        const rowsAffected = await ModeloAdmin.eliminarMedico({id});
+        if (rowsAffected > 0) {
+            res.status(204).send(console.log(rowsAffected))
+        } else {
+            res.status(404).send("Médico no encontrado")
+        }
     }
 
     static async actualizarMedico (req, res) {

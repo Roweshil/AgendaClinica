@@ -37,16 +37,22 @@ export class ModeloAdmin {
         throw error;
     }
 
-    
-
   }
 
   static async eliminarMedico({ id }) {
 
-    await db.execute(
-      `DELETE FROM medicos WHERE id = ?`,
-      [id]
-    )
+    try {
+      const resultado = await db.execute(
+        `DELETE FROM medicos WHERE id = ?`,
+        [id]
+      )
+      return resultado.rowsAffected
+      console.log(resultado.rowsAffected);
+
+    } catch (error) {
+      console.error('Error al eliminar el médico:', error);
+      throw error;
+    }
   }
 
   static async actualizarMedico({ id, input }) {

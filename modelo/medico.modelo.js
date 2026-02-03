@@ -1,4 +1,4 @@
-import { db } from '../../turso.js';
+import { db } from "../DB/turso.js";
 
 export class ModeloMedico {
 
@@ -22,8 +22,6 @@ export class ModeloMedico {
       console.error('Error al crear la cita:', error);
       throw error;
     }
-
-
   }
     
   static async obtenerCitaPorId({id}) {
@@ -37,10 +35,19 @@ export class ModeloMedico {
   }
 
   static async eliminarCita({id}) {
-    await db.execute(
-      `DELETE FROM citas WHERE id = ?`,
-      [id]
-    )
+    
+    try {
+      const resultado = await db.execute(
+        `DELETE FROM citas WHERE id = ?`,
+        [id]
+      )
+
+      return resultado.rowsAffected
+
+    } catch (error) {
+      console.error('Error al eliminar la cita:', error);
+      throw error;
+    }
   }
 
   static async actualizarCita({ id, input }) {
