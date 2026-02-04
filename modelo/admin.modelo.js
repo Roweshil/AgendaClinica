@@ -4,36 +4,54 @@ export class ModeloAdmin {
 
   static async obtenerTodos() {
 
-    const resultado = await db.execute(
+    try {
+      const resultado = await db.execute(
         'SELECT * FROM medicos'
     )
 
     return resultado.rows;
+
+    } catch (error) {
+      console.error('Error al obtener los médicos:', error);
+      throw error;
+    }
   }  
 
   static async obtenerPorId({ id }) {
 
-    const resultado = await db.execute(
+    try {
+      const resultado = await db.execute(
         'SELECT * FROM medicos WHERE id = ?', 
         [id]
     )
 
     return resultado.rows[ 0 ];
+
+    } catch (error) {
+      console.error('Error al obtener el médico por ID:', error);
+      throw error;
+    }
   }
 
   static async crearMedico({ input }) {
-    const { nombre } = input
+
+    const { 
+      nombre, 
+      email, 
+      password, 
+      googletoken 
+    } = input
 
     try {
         const resultado = await db.execute(
-        `INSERT INTO medicos (nombre) VALUES (?)`,
-        [nombre]
+        `INSERT INTO medicos (nombre, email, password, googletoken) VALUES (?, ?, ?, ?)`,
+        [nombre, email, password, googletoken]
         )
 
         return resultado.lastInsertRowid.toString()
     
     } catch (error) {
-        console.error('Error al crear el médico:', error);
+        console.error('Error al crear el médico:', );
         throw error;
     }
 
@@ -46,8 +64,9 @@ export class ModeloAdmin {
         `DELETE FROM medicos WHERE id = ?`,
         [id]
       )
-      return resultado.rowsAffected
       console.log(resultado.rowsAffected);
+      return resultado.rowsAffected
+
 
     } catch (error) {
       console.error('Error al eliminar el médico:', error);
@@ -57,10 +76,18 @@ export class ModeloAdmin {
 
   static async actualizarMedico({ id, input }) {
     const { nombre } = input
-    const resultado = await db.execute(
+    
+    try {
+      const resultado = await db.execute(
       `UPDATE medicos SET nombre = ? WHERE id = ?`,
       [nombre, id]
-    )
+      )
+      return resultado.rowsAffected
+    } catch (error) {
+      console.error('Error al actualizar el médico:', error);
+      throw error;
+    }
   }
 
 }
+

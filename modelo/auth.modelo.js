@@ -4,7 +4,7 @@ export class ModeloAuth {
 
     static async login() {
         // Métodos relacionados con la autenticación y autorización
-        console.log("Login attempt");
-
+        await console.log("Login attempt");
+        return console.log("Login successful");
     }
 }
