@@ -5,12 +5,9 @@ export class ModeloAdmin {
   static async obtenerTodos() {
 
     try {
-      const resultado = await db.execute(
-        'SELECT * FROM medicos'
-    )
+      const resultado = await db.execute('SELECT * FROM medicos')
 
-    return resultado.rows;
-
+      return resultado.rows;
     } catch (error) {
       console.error('Error al obtener los médicos:', error);
       throw error;
@@ -41,7 +38,7 @@ export class ModeloAdmin {
       password, 
       googletoken 
     } = input
-
+    console.log(input);
     try {
         const resultado = await db.execute(
         `INSERT INTO medicos (nombre, email, password, googletoken) VALUES (?, ?, ?, ?)`,

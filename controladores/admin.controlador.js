@@ -1,49 +1,72 @@
 import { ModeloAdmin } from "../modelo/admin.modelo.js";
-import { validateMedico } from "../schemas/medicos.schema.js";
-import { validatePartialMedico } from "../schemas/medicos.schema.js";
+import { validateMedico, validatePartialMedico } from "../schemas/medicos.schema.js";
 
 export class AdminController {
     static async obtenerTodos (req, res) {
-        console.log("intento de acceso try");
-        const admins = await ModeloAdmin.obtenerTodos()
-        if (!admins || admins.length === 0) {
-            return res.status(404).json({ error: "No hay médicos registrados" });
+
+        try {
+            const admins = await ModeloAdmin.obtenerTodos()
+            if (!admins || admins.length === 0) {
+                return res.status(404).json({ error: "No hay médicos registrados" });
+            }
+            res.json(admins)
+        } catch (error) {
+            console.error('Error al obtener los médicos:', error)
+            res.status(500).json({ error: "Error al obtener los médicos" })
         }
-        res.json(admins)   
     }
 
     static async obtenerPorId (req, res) {
         const { id } = req.params;
-        const admin =  await ModeloAdmin.obtenerPorId({id});
-        if (!admin) {
-            return res.status(404).json({ error: "Medico no encontrado" });
+        try {
+            const admin =  await ModeloAdmin.obtenerPorId({id});
+            if (!admin) {
+                return res.status(404).json({ error: "Medico no encontrado" });
+            }
+            res.json(admin);
+        } catch (error) {
+            console.error('Error al obtener el médico por ID:', error)
+            res.status(500).json({ error: "Error al obtener el médico por ID" })
         }
-        res.json(admin);
     }
 
     static async crearMedico (req, res) {
         
-        const result = validateMedico
+        const result = validateMedico(req.body)
 
         if (!result.success) {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
-        const newMedico = await ModeloAdmin.crearMedico({ input: req.body })
-        res.status(201).json(newMedico)
-        if (!newMedico) {
-            return res.status(400).json({ error: "Error al crear el médico" });
+
+        try {
+            const newMedico = await ModeloAdmin.crearMedico({ input: req.body })
+            if (!newMedico) {
+                return res.status(400).json({ error: "Error al crear el médico" })
+            }
+
+            res.status(201).json(newMedico)
+
+        } catch (error) {
+            console.error('Error al crear el médico:', error)
+            res.status(500).json({ error: "Error al crear el médico" })
         }
     }
 
     static async eliminarMedico (req, res) {
         const { id } = req.params;
-        const rowsAffected = await ModeloAdmin.eliminarMedico({id});
-        if (rowsAffected > 0) {
+        
+        try {
+            const rowsAffected = await ModeloAdmin.eliminarMedico({id});
+            if (rowsAffected === 0) {
+                res.status(404).send("Médico no encontrado")
+            }
             res.status(204).send(console.log(rowsAffected))
-        } else {
-            res.status(404).send("Médico no encontrado")
+        } catch (error) {
+            console.error('Error al eliminar el médico:', error)
+            res.status(500).json({ error: "Error al eliminar el médico" })
         }
+
     }
 
     static async actualizarMedico (req, res) {
@@ -54,8 +77,14 @@ export class AdminController {
         }
 
         const { id } = req.params;
-        const updatedMedico = await ModeloAdmin.actualizarMedico({ id, input: req.body });
-        res.status(201).json(updatedMedico);
+
+        try {
+            const updatedMedico = await ModeloAdmin.actualizarMedico({ id, input: req.body });
+            res.status(201).json(updatedMedico);
+        } catch (error) {
+            console.error('Error al actualizar el médico:', error)
+            res.status(500).json({ error: "Error al actualizar el médico" })
+        }
     }
 
 }

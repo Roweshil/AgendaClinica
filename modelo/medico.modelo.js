@@ -4,24 +4,27 @@ export class ModeloMedico {
 
    static async crearCita({ input }) {
     const { 
-        medicoId,
+        medico_Id,
         fecha, 
         hora,
         paciente, 
         motivo,
+        google_event_id,
+        estado,
     } = input
 
+    console.log(input);
     try {
-      const [resultado] = await db.execute(
-        `INSERT INTO citas (fecha, hora, paciente, motivo, medico_id) 
-          VALUES (?, ?, ?, ?, ?)`,
-        [fecha, hora, paciente, motivo, medicoId]
+      const resultado =await db.execute(
+        `INSERT INTO citas (medico_id, fecha, hora, paciente, motivo, google_event_id, estado) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [medico_Id, fecha, hora, paciente, motivo, google_event_id, estado]
       )
-
+    
       return resultado.lastInsertRowid.toString()
-
+    
     } catch (error) {
-      console.error('Error al crear la cita:', error)
+      console.error('Error al crear la cita:', error);
       throw error;
     }
   }
@@ -71,24 +74,16 @@ export class ModeloMedico {
 
   static async actualizarCita({ id, input }) {
 
-    const { 
-        medicoId,
-        fecha, 
-        hora, 
-        paciente, 
-        motivo, 
-         
-    } = input
+    const { nombre_paciente } = input
 
     try {
       const resultado = await db.execute(
         `UPDATE citas 
-         SET medico_id = ?, fecha = ?, hora = ?, paciente = ?, motivo = ?  
+         SET nombre_paciente = ?
          WHERE id = ?`,
-        [medicoId, fecha, hora, paciente, motivo, id]
+        [nombre_paciente, id]
       )
       return resultado.rowsAffected
-
     } catch (error) {
       console.error('Error al actualizar la cita:', error);
       throw error;
