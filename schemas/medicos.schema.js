@@ -4,7 +4,7 @@ const medicoSchema = z.object({
     nombre: z.string().min(2).max(100),
     email: z.string().max(100),
     password: z.string().min(8).max(100),
-    googleCalendarId: z.string().max(255).optional(),
+    google_event_id: z.string().max(255).optional(),
 })
 
 export function validateMedico (input) {

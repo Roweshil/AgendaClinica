@@ -72,18 +72,33 @@ export class ModeloAdmin {
   }
 
   static async actualizarMedico({ id, input }) {
-    const { nombre } = input
-    
-    try {
-      const resultado = await db.execute(
-      `UPDATE medicos SET nombre = ? WHERE id = ?`,
-      [nombre, id]
-      )
-      return resultado.rowsAffected
-    } catch (error) {
-      console.error('Error al actualizar el médico:', error);
-      throw error;
+    const fields = []
+    const values = []
+
+    for (const [key, value] of Object.entries(input)) {
+      fields.push(`${key} = ?`)
+      values.push(value)
     }
+
+    if (fields.length === 0) return 0
+
+    const sql = `
+      UPDATE medicos
+      SET ${fields.join(', ')}
+      WHERE id = ?
+    `
+
+    values.push(id)
+
+    try {
+
+      const result = await db.execute(sql, values)
+      return result.rowsAffected
+
+    } catch (error) {
+        console.error('Error al actualizar la cita:', error)
+        throw error
+      }
   }
 
 }

@@ -20,7 +20,7 @@ authRouter.post('/login', AuthController.login)
 
 // Rutas para gestión de citas médicas
 
-medicoRouter.get('/citas/consulta/', MedicoController.obtenerCitasPorMedico)
+medicoRouter.get('/citas/mis-citas/:medicoId', MedicoController.obtenerCitasPorMedico)
 
 medicoRouter.get('/citas/consulta/:id', MedicoController.obtenerCitaPorId)
 
@@ -28,7 +28,7 @@ medicoRouter.post('/citas/crear', MedicoController.crearCita)
 
 medicoRouter.delete('/citas/eliminar/:id', MedicoController.eliminarCita)
 
-medicoRouter.put('/citas/actualizar/:id', MedicoController.actualizarCita)
+medicoRouter.patch('/citas/actualizar/:id', MedicoController.actualizarCita)
 
 // Rutas para administración de médicos
 
@@ -40,7 +40,7 @@ adminRouter.post('/crear', AdminController.crearMedico)
 
 adminRouter.delete('/borrar/:id', AdminController.eliminarMedico)
 
-adminRouter.put('/actualizar/:id', AdminController.actualizarMedico)
+adminRouter.patch('/actualizar/:id', AdminController.actualizarMedico)
 
 // (Deshabilitadas temporalmente para pruebas)
  //authRouter.post('/register', AuthController.register)

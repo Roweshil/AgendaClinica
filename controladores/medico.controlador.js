@@ -6,7 +6,7 @@ export class MedicoController {
     static async obtenerCitasPorMedico (req, res) {
         const { medicoId } = req.params
         try {
-            const citas = await ModeloMedico.obtenerCitasPorMedico(medicoId)
+            const citas = await ModeloMedico.obtenerCitasPorMedico({medicoId})
             if (!citas || citas.length === 0) {
                 return res.status(404).json({ error: "No hay citas registradas" })
             }
@@ -18,9 +18,9 @@ export class MedicoController {
     }
 
     static async obtenerCitaPorId(req, res) {
-        const { id } = req.params;
+        const { id } = req.params
         try {
-            const medico = await ModeloMedico.obtenerPorId(id)
+            const medico = await ModeloMedico.obtenerPorId({id})
             if (!medico) {
                 return res.status(404).json({ error: "Cita no encontrada" })
             }
@@ -54,7 +54,7 @@ export class MedicoController {
     static async eliminarCita (req, res) {
         const { id } = req.params
         try {
-            const rowsAffected =await ModeloMedico.eliminarCita({id})
+            const rowsAffected = await ModeloMedico.eliminarCita({id})
             if (rowsAffected === 0) {
                 return res.status(404).json({ error: "Cita no encontrada" })
             }
@@ -77,13 +77,11 @@ export class MedicoController {
         try {
             
             const updatedCita = await ModeloMedico.actualizarCita({ id, input: req.body })
-            if (updatedCita === 0) {
-                return res.status(400).json({ error: "Error al actualizar la cita" })
-            }
+           
             res.status(201).json(updatedCita)
         } catch (error) {
             console.error('Error al actualizar la cita:', error)
-            res.status(500).json({ error: "Error al actualizar la cita" })
+            res.status(500).json({ error: "Error al actualizar la cita controler" })
         }
     }
 }

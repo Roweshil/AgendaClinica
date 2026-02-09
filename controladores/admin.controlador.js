@@ -76,7 +76,7 @@ export class AdminController {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
-        const { id } = req.params;
+        const { id } = req.params
 
         try {
             const updatedMedico = await ModeloAdmin.actualizarMedico({ id, input: req.body });

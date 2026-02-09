@@ -15,7 +15,7 @@ export class ModeloMedico {
 
     console.log(input);
     try {
-      const resultado =await db.execute(
+      const resultado = await db.execute(
         `INSERT INTO citas (medico_id, fecha, hora, paciente, motivo, google_event_id, estado) 
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [medico_Id, fecha, hora, paciente, motivo, google_event_id, estado]
@@ -29,11 +29,11 @@ export class ModeloMedico {
     }
   }
     
-  static async obtenerCitaPorId({id}) {
+  static async obtenerPorId({id}) {
     
     try {
 
-      const resultado = await db.execute('SELECT * FROM citas WHERE id = ?', [id])
+      const resultado = await db.execute('SELECT * FROM citas WHERE id_cita = ?', [id])
 
       return resultado.rows[0]; 
 
@@ -60,7 +60,7 @@ export class ModeloMedico {
     
     try {
       const resultado = await db.execute(
-        `DELETE FROM citas WHERE id = ?`,
+        `DELETE FROM citas WHERE id_cita = ?`,
         [id]
       )
 
@@ -73,21 +73,33 @@ export class ModeloMedico {
   }
 
   static async actualizarCita({ id, input }) {
+    const fields = []
+    const values = []
 
-    const { nombre_paciente } = input
+    for (const [key, value] of Object.entries(input)) {
+      fields.push(`${key} = ?`)
+      values.push(value)
+    }
+
+    if (fields.length === 0) return 0
+
+    const sql = `
+      UPDATE citas
+      SET ${fields.join(', ')}
+      WHERE id_cita = ?
+    `
+
+    values.push(id)
 
     try {
-      const resultado = await db.execute(
-        `UPDATE citas 
-         SET nombre_paciente = ?
-         WHERE id = ?`,
-        [nombre_paciente, id]
-      )
-      return resultado.rowsAffected
-    } catch (error) {
-      console.error('Error al actualizar la cita:', error);
-      throw error;
-    }
-  }
 
+      const result = await db.execute(sql, values)
+      return result.rowsAffected
+
+    } catch (error) {
+        console.error('Error al actualizar la cita:', error)
+        throw error
+      }
+  }
+  
 }
