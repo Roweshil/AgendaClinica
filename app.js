@@ -11,9 +11,10 @@ const app = express();
 app.use(express.json());
 app.disable('x-powered-by'); // deshabilitar el header X-Powered-By: Express
 
+app.use('/api/login', authRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/medico', medicoRouter)
-app.use('/api/auth', authRouter)
+
 
 
 const PORT = process.env.PORT ?? 1234
