@@ -17,13 +17,13 @@ export const authRouter = Router()
 
 
 // Rutas protegidas con middleware de autenticación y autorización
-authRouter.post('/login', AuthController.login)
+authRouter.post('/', AuthController.login)
 
 authRouter.post('/logout', AuthController.logout)
 
 // Rutas para gestión de citas médicas
 
-medicoRouter.get('/citas/mis-citas/:medicoId', MedicoController.obtenerCitasPorMedico)
+medicoRouter.get('/citas/mis-citas/:id', MedicoController.obtenerCitasPorMedico)
 
 medicoRouter.get('/citas/consulta/:id', MedicoController.obtenerCitaPorId)
 

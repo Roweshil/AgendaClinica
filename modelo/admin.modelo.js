@@ -17,15 +17,16 @@ export class ModeloAdmin {
     }
   }  
 
-  static async obtenerPorId({ id }) {
+  static async obtenerPorId({ uuid }) {
 
     try {
       const resultado = await db.execute(
-        'SELECT * FROM medicos WHERE id = ?', 
-        [id]
+        'SELECT uuid, nombre, email, roles FROM medicos WHERE uuid = ?', 
+        [uuid]
     )
 
-    return resultado.rows[ 0 ]
+      return resultado.rows[0]
+
 
     } catch (error) {
       console.error('Error al obtener el médico por ID:', error)
@@ -63,8 +64,8 @@ export class ModeloAdmin {
 
     try {
         const resultado = await db.execute(
-        `INSERT INTO medicos (uuid, nombre, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?)`,
-        [uuid, nombre, email, hashedPassword, googletoken, roles]
+          `INSERT INTO medicos (uuid, nombre, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?)`,
+          [uuid, nombre, email, hashedPassword, googletoken, roles]
         )
 
         return uuid
@@ -93,7 +94,7 @@ export class ModeloAdmin {
     }
   }
 
-  static async actualizarMedico({ id, input }) {
+  static async actualizarMedico({ uuid, input }) {
     const fields = []
     const values = []
 
@@ -107,18 +108,18 @@ export class ModeloAdmin {
     const sql = `
       UPDATE medicos
       SET ${fields.join(', ')}
-      WHERE id = ?
+      WHERE uuid = ?
     `
 
-    values.push(id)
+    values.push(uuid)
 
     try {
 
       const result = await db.execute(sql, values)
-      return result.rowsAffected
+      return uuid
 
     } catch (error) {
-        console.error('Error al actualizar la cita:', error)
+        console.error('Error al actualizar el médico:', error)
         throw error
       }
   }

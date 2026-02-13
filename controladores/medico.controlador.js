@@ -4,9 +4,9 @@ import { validateCita, validatePartialCita  } from "../schemas/citas.schema.js"
 export class MedicoController {
 
     static async obtenerCitasPorMedico (req, res) {
-        const { medicoId } = req.params
+        const { id: uuid } = req.params
         try {
-            const citas = await ModeloMedico.obtenerCitasPorMedico({medicoId})
+            const citas = await ModeloMedico.obtenerCitasPorMedico({ uuid})
             if (!citas || citas.length === 0) {
                 return res.status(404).json({ error: "No hay citas registradas" })
             }
@@ -18,9 +18,9 @@ export class MedicoController {
     }
 
     static async obtenerCitaPorId(req, res) {
-        const { id } = req.params
+        const { id: uuid } = req.params
         try {
-            const medico = await ModeloMedico.obtenerPorId({id})
+            const medico = await ModeloMedico.obtenerPorId({uuid})
             if (!medico) {
                 return res.status(404).json({ error: "Cita no encontrada" })
             }
@@ -47,14 +47,14 @@ export class MedicoController {
             res.status(201).json(newCita)
         } catch (error) {
             console.error('Error al crear la cita:', error)
-            res.status(500).json({ error: "Error al crear la cita" })
+            res.status(500).json({ error: "Error al crear la cita i"})
         }
     }
 
     static async eliminarCita (req, res) {
-        const { id } = req.params
+        const { id: uuid } = req.params
         try {
-            const rowsAffected = await ModeloMedico.eliminarCita({id})
+            const rowsAffected = await ModeloMedico.eliminarCita({uuid})
             if (rowsAffected === 0) {
                 return res.status(404).json({ error: "Cita no encontrada" })
             }
@@ -72,11 +72,12 @@ export class MedicoController {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
-        const { id } = req.params
+        const { id: uuid } = req.params
+        console.log(req.params)
 
         try {
             
-            const updatedCita = await ModeloMedico.actualizarCita({ id, input: req.body })
+            const updatedCita = await ModeloMedico.actualizarCita({ uuid, input: req.body })
            
             res.status(201).json(updatedCita)
         } catch (error) {

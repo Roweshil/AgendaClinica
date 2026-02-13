@@ -1,17 +1,20 @@
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 import { ModeloAuth } from '../modelo/auth.modelo.js'
 
 export class AuthService {
+
   static async login({ email, password }) {
 
-    const user = await ModeloAuth.findByEmail(email)
+
+    const user = await ModeloAuth.buscarPorEmail(email)
     // uuid, email, password, rol
     if (!user) {
       throw new Error('Credenciales inválidas')
     }
 
-    const isValid = await bcrypt.compare(password, user.password)
+    const isValid = await bcrypt.compare(password, user.hashedPassword)
 
     if (!isValid) {
       throw new Error('Credenciales inválidas')
@@ -33,17 +36,4 @@ export class AuthService {
     }
   }
 
-  /*static async register({ usuario, password }) {
-    
-    const { user, password } = req.body // cuerpo de la peticion
-    console.log(req.body)
-
-    try {
-        const id = await ModeloAuth.create(user, password)
-        res.json({ id })
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-
-  }*/
 }

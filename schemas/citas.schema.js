@@ -1,8 +1,8 @@
-import z from 'zod'
+import z, { uuid } from 'zod'
 
 const citaSchema = z.object({
-    medico_Id: z.number({
-        invalid_type_error: 'id debe ser numero',
+    medico_Id: z.string({
+        invalid_type_error: 'id debe ser string',
         required_error: 'el id es requerido'
     }),
     fecha: z.string({

@@ -1,5 +1,5 @@
-import { ModeloAdmin } from "../modelo/admin.modelo.js";
-import { validateMedico, validatePartialMedico } from "../schemas/medicos.schema.js";
+import { ModeloAdmin } from "../modelo/admin.modelo.js"
+import { validateMedico, validatePartialMedico } from "../schemas/medicos.schema.js"
 
 export class AdminController {
     static async obtenerTodos (req, res) {
@@ -7,23 +7,19 @@ export class AdminController {
         try {
             const admins = await ModeloAdmin.obtenerTodos()
             if (!admins || admins.length === 0) {
-                return res.status(404).json({ error: "No hay médicos registrados" });
+                return res.status(404).json({ error: "No hay médicos registrados" })
             }
 
             const safeUsers = admins.map(user => ({
-                id: user.id,
-                username: user.username,
+                nombre: user.nombre,
                 email: user.email,
-                role: user.role,
-                created_at: user.created_at,
-                // NUNCA incluyas: password, tokens, ips, datos internos...
-            }));
+            }))
 
             res.json({
                 ok: true,
                 count: safeUsers.length,
                 users: safeUsers
-            });
+            })
             
         } catch (error) {
             console.error('Error al obtener los médicos:', error)
@@ -32,13 +28,15 @@ export class AdminController {
     }
 
     static async obtenerPorId (req, res) {
-        const { id } = req.params;
+
+        const { id: uuid } = req.params
+
         try {
-            const admin =  await ModeloAdmin.obtenerPorId({id});
+            const admin =  await ModeloAdmin.obtenerPorId({uuid})
             if (!admin) {
-                return res.status(404).json({ error: "Medico no encontrado" });
+                return res.status(404).json({ error: "Medico no encontrado" })
             }
-            res.json(admin);
+            res.json(admin)
         } catch (error) {
             console.error('Error al obtener el médico por ID:', error)
             res.status(500).json({ error: "Error al obtener el médico por ID" })
@@ -57,22 +55,22 @@ export class AdminController {
         try {
             const newMedico = await ModeloAdmin.crearMedico({ input: req.body })
             if (!newMedico) {
-                return res.status(400).json({ error: "Error al crear el médico" })
+                return res.status(400).json({ error: "Error al crear el médico " })
             }
 
             res.status(201).json(newMedico)
 
         } catch (error) {
             console.error('Error al crear el médico:', error)
-            res.status(500).json({ error: "Error al crear el médico" })
+            res.status(500).json({ error: error.message })
         }
     }
 
     static async eliminarMedico (req, res) {
-        const { id } = req.params;
+        const { id: uuid } = req.params
         
         try {
-            const rowsAffected = await ModeloAdmin.eliminarMedico({id});
+            const rowsAffected = await ModeloAdmin.eliminarMedico({uuid})
             if (rowsAffected === 0) {
                 res.status(404).send("Médico no encontrado")
             }
@@ -91,11 +89,11 @@ export class AdminController {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
-        const { id } = req.params
+        const { id: uuid } = req.params
 
         try {
-            const updatedMedico = await ModeloAdmin.actualizarMedico({ id, input: req.body });
-            res.status(201).json(updatedMedico);
+            const updatedMedico = await ModeloAdmin.actualizarMedico({ uuid, input: req.body })
+            res.status(201).json(updatedMedico)
         } catch (error) {
             console.error('Error al actualizar el médico:', error)
             res.status(500).json({ error: "Error al actualizar el médico" })
