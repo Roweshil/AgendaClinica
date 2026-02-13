@@ -1,4 +1,5 @@
-import { db } from "../DB/turso.js";
+import { db } from "../DB/turso.js"
+import crypto from "node:crypto"
 
 export class ModeloMedico {
 
@@ -13,7 +14,11 @@ export class ModeloMedico {
         estado,
     } = input
 
+    
     console.log(input);
+
+    const uuid = crypto.randomUUID()
+
     try {
       const resultado = await db.execute(
         `INSERT INTO citas (medico_id, fecha, hora, paciente, motivo, google_event_id, estado) 

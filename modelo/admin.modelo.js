@@ -1,4 +1,7 @@
-import { db } from "../DB/turso.js";
+import { db } from "../DB/turso.js"
+import crypto from "node:crypto"
+import bcrypt from 'bcrypt'
+
 
 export class ModeloAdmin {
 
@@ -7,10 +10,10 @@ export class ModeloAdmin {
     try {
       const resultado = await db.execute('SELECT * FROM medicos')
 
-      return resultado.rows;
+      return resultado.rows
     } catch (error) {
-      console.error('Error al obtener los médicos:', error);
-      throw error;
+      console.error('Error al obtener los médicos:', error)
+      throw error
     }
   }  
 
@@ -22,11 +25,11 @@ export class ModeloAdmin {
         [id]
     )
 
-    return resultado.rows[ 0 ];
+    return resultado.rows[ 0 ]
 
     } catch (error) {
-      console.error('Error al obtener el médico por ID:', error);
-      throw error;
+      console.error('Error al obtener el médico por ID:', error)
+      throw error
     }
   }
 
@@ -36,38 +39,57 @@ export class ModeloAdmin {
       nombre, 
       email, 
       password, 
-      googletoken 
+      googletoken,
+      roles,
     } = input
-    console.log(input);
+
+    const existing = await db.execute({
+      sql: "SELECT id FROM medicos WHERE email = ?",
+      args: [email],
+    })
+
+    if (existing.rows.length > 0) {
+        throw new Error("Usuario ya registrado")
+    }
+
+    console.log(input)
+
+    const uuid = crypto.randomUUID()
+
+    const saltRounds = Number(process.env.SALT_ROUNDS)
+    
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+
     try {
         const resultado = await db.execute(
-        `INSERT INTO medicos (nombre, email, password, googletoken) VALUES (?, ?, ?, ?)`,
-        [nombre, email, password, googletoken]
+        `INSERT INTO medicos (uuid, nombre, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?)`,
+        [uuid, nombre, email, hashedPassword, googletoken, roles]
         )
 
-        return resultado.lastInsertRowid.toString()
+        return uuid
     
     } catch (error) {
-        console.error('Error al crear el médico:', );
-        throw error;
+        console.error('Error al crear el médico:', error)
+        throw error
     }
 
   }
 
-  static async eliminarMedico({ id }) {
+  static async eliminarMedico({ uuid }) {
 
     try {
       const resultado = await db.execute(
-        `DELETE FROM medicos WHERE id = ?`,
-        [id]
+        `DELETE FROM medicos WHERE uuid = ?`,
+        [uuid]
       )
-      console.log(resultado.rowsAffected);
+      console.log(resultado.rowsAffected)
       return resultado.rowsAffected
 
 
     } catch (error) {
-      console.error('Error al eliminar el médico:', error);
-      throw error;
+      console.error('Error al eliminar el médico:', error)
+      throw error
     }
   }
 

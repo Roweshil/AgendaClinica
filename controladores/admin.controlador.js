@@ -9,7 +9,22 @@ export class AdminController {
             if (!admins || admins.length === 0) {
                 return res.status(404).json({ error: "No hay médicos registrados" });
             }
-            res.json(admins)
+
+            const safeUsers = admins.map(user => ({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                created_at: user.created_at,
+                // NUNCA incluyas: password, tokens, ips, datos internos...
+            }));
+
+            res.json({
+                ok: true,
+                count: safeUsers.length,
+                users: safeUsers
+            });
+            
         } catch (error) {
             console.error('Error al obtener los médicos:', error)
             res.status(500).json({ error: "Error al obtener los médicos" })

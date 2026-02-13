@@ -1,10 +1,13 @@
-import { db } from "../DB/turso.js";
+import { db } from "../DB/turso.js"
 
 export class ModeloAuth {
 
-    static async login() {
-        // Métodos relacionados con la autenticación y autorización
-        await console.log("Login attempt");
-        return console.log("Login successful");
-    }
+    static async findByEmail(email) {
+        const [rows] = await db.execute(
+        'SELECT uuid, email, password, rol FROM users WHERE email = ?',
+        [email]
+        )
+
+        return rows[0]
+    } 
 }

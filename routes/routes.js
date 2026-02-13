@@ -14,9 +14,12 @@ export const authRouter = Router()
 
 // Rutas Publicas
 
-authRouter.post('/login', AuthController.login)
+
 
 // Rutas protegidas con middleware de autenticación y autorización
+authRouter.post('/login', AuthController.login)
+
+authRouter.post('/logout', AuthController.logout)
 
 // Rutas para gestión de citas médicas
 
