@@ -6,11 +6,28 @@ export class MedicoController {
     static async obtenerCitasPorMedico (req, res) {
         const { id: uuid } = req.params
         try {
-            const citas = await ModeloMedico.obtenerCitasPorMedico({ uuid})
+            const citas = await ModeloMedico.obtenerCitasPorMedico({uuid})
+
             if (!citas || citas.length === 0) {
                 return res.status(404).json({ error: "No hay citas registradas" })
             }
-            res.json(citas)
+
+            const safeCitas = citas.map(cita => ({
+                uuid: cita.uuid,
+                fecha: cita.fecha,
+                hora: cita.hora,
+                paciente: cita.paciente,
+                motivo: cita.motivo,
+                estado: cita.estado,
+                creacion: cita.created_at
+            }))
+
+            res.json({
+                ok: true,
+                count: safeCitas.length,
+                users: safeCitas
+            })
+
         } catch (error) {
             console.error('Error al obtener las citas por médico:', error)
             res.status(500).json({ error: "Error al obtener las citas del médico" })
@@ -20,11 +37,28 @@ export class MedicoController {
     static async obtenerCitaPorId(req, res) {
         const { id: uuid } = req.params
         try {
-            const medico = await ModeloMedico.obtenerPorId({uuid})
-            if (!medico) {
+            const cita = await ModeloMedico.obtenerCitaPorId({uuid})
+            
+            if (!cita) {
                 return res.status(404).json({ error: "Cita no encontrada" })
             }
-            res.json(medico);
+
+            const safeCitas = [cita].map(cita => ({
+                uuid: cita.uuid,
+                fecha: cita.fecha,
+                hora: cita.hora,
+                paciente: cita.paciente,
+                motivo: cita.motivo,
+                estado: cita.estado,
+                creacion: new Date(cita.created_at).toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
+            }))
+
+            res.status(200).json({
+                ok: true,
+                count: safeCitas.length,
+                users: safeCitas
+            })
+            
         } catch (error) {
             console.error('Error al obtener la cita por ID:', error)
             res.status(500).json({ error: "Error al obtener la cita por ID" })
@@ -73,13 +107,19 @@ export class MedicoController {
         }
 
         const { id: uuid } = req.params
-        console.log(req.params)
+
+        console.log(result.data)
 
         try {
             
             const updatedCita = await ModeloMedico.actualizarCita({ uuid, input: result.data })
            
-            res.status(201).json(updatedCita)
+
+            res.status(200).json({
+                ok: true,
+                cita: updatedCita
+            })
+
         } catch (error) {
             console.error('Error al actualizar la cita:', error)
             res.status(500).json({ error: "Error al actualizar la cita controler" })

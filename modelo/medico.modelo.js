@@ -34,7 +34,7 @@ export class ModeloMedico {
     }
   }
     
-  static async obtenerPorId({uuid}) {
+  static async obtenerCitaPorId({uuid}) {
     
     try {
 
@@ -99,7 +99,8 @@ export class ModeloMedico {
     try {
 
       const result = await db.execute(sql, values)
-      return 2
+
+      return uuid 
 
     } catch (error) {
         console.error('Error al actualizar la cita:', error)

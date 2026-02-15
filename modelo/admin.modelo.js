@@ -8,7 +8,7 @@ export class ModeloAdmin {
   static async obtenerTodos() {
 
     try {
-      const resultado = await db.execute('SELECT * FROM medicos')
+      const resultado = await db.execute('SELECT uuid, nombre, email FROM medicos')
 
       return resultado.rows
     } catch (error) {

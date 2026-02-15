@@ -5,12 +5,12 @@ export class AdminController {
     static async obtenerTodos (req, res) {
 
         try {
-            const admins = await ModeloAdmin.obtenerTodos()
-            if (!admins || admins.length === 0) {
+            const medicos = await ModeloAdmin.obtenerTodos()
+            if (!medicos || medicos.length === 0) {
                 return res.status(404).json({ error: "No hay médicos registrados" })
             }
 
-            const safeUsers = admins.map(user => ({
+            const safeUsers = medicos.map(user => ({
                 nombre: user.nombre,
                 email: user.email,
             }))
