@@ -41,7 +41,7 @@ export class ModeloAdmin {
       email, 
       password, 
       googletoken,
-      roles,
+      roles = 'medico'
     } = input
 
     const existing = await db.execute({
@@ -71,11 +71,36 @@ export class ModeloAdmin {
         return uuid
     
     } catch (error) {
-        console.error('Error al crear el médico:', error)
+        console.error('Error al crear el médico m:', error)
         throw error
     }
 
   }
+
+  static async actualizarContraseña ({ uuid, newPassword }) {
+
+    const saltRounds = Number(process.env.SALT_ROUNDS)
+    
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds)
+
+    try {
+        const resultado = await db.execute(
+          `UPDATE medicos SET hashedPassword = ? WHERE uuid = ?`,
+          [hashedPassword, uuid]
+        )
+
+        return uuid
+    
+    } catch (error) {
+        console.error('Error al actualizar contraseña del médico:', error)
+        throw error
+    }
+  
+  }
+
+
+
+
 
   static async eliminarMedico({ uuid }) {
 
@@ -102,6 +127,8 @@ export class ModeloAdmin {
       fields.push(`${key} = ?`)
       values.push(value)
     }
+
+    console.log(input)
 
     if (fields.length === 0) return 0
 

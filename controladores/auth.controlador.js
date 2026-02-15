@@ -1,5 +1,4 @@
 import { AuthService } from "../Services/authService.js";
-const SECRET_JWT_KEY = process.env.SECRET
 
 
 export class AuthController {
@@ -10,7 +9,7 @@ export class AuthController {
 
         try {
 
-            const { user, token } = await AuthService.login({ email, password })    // cuerpo de la peticion
+            const { user, token } = await AuthService.login({ email, password })    
             res
             .cookie('access_token', token, {
                 httpOnly: true, // solo se puede acceder en el servidor
@@ -25,21 +24,14 @@ export class AuthController {
             }
     }
 
-    static async register(req, res) {
-        const { username, password } = req.body // cuerpo de la peticion
-        console.log(req.body)
+    static logout(req, res) {
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production'
+        })
 
-        try {
-            const id = await ModeloAuth.register(username, password)
-            res.json({ id })
-        } catch (error) {
-            res.status(400).json({ error: error.message })
-        }
-    }
-
-    static async logout(req, res) {
-        res.clearCookie('access_token')
-        res.send('Logout endpoint')
+        res.json({ message: 'Logout exitoso' })
     }
     
 }

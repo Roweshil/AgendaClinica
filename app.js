@@ -1,23 +1,24 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import express from 'express'
+import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
-import { adminRouter } from './routes/routes.js';
-import { medicoRouter } from './routes/routes.js';
-import { authRouter } from './routes/routes.js';
 
-dotenv.config();
+import adminRouter from './routes/privada/admin.routes.js'
+import medicoRouter from './routes/privada/medico.routes.js'
+import authRouter from './routes/publica/routes.js'
+import authMiddleware from './middlewares/authMiddleware.js'
+import rolesAutorizados  from './middlewares/roleMiddleware.js'
 
-const app = express();
+dotenv.config()
+
+const app = express()
 app.use(cookieParser())
 
-app.use(express.json());
-app.disable('x-powered-by'); // deshabilitar el header X-Powered-By: Express
+app.use(express.json())
+app.disable('x-powered-by') // deshabilitar el header X-Powered-By: Express
 
-app.use('/api/login', authRouter)
-app.use('/api/admin', adminRouter)
-app.use('/api/medico', medicoRouter)
-
-
+app.use('/api/', authRouter)
+app.use('/api/admin', authMiddleware, rolesAutorizados('admin'), adminRouter)
+app.use('/api/medico', authMiddleware,rolesAutorizados('admin', 'medico'), medicoRouter)
 
 const PORT = process.env.PORT ?? 1234
 

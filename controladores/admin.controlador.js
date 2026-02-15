@@ -51,9 +51,8 @@ export class AdminController {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
-
         try {
-            const newMedico = await ModeloAdmin.crearMedico({ input: req.body })
+            const newMedico = await ModeloAdmin.crearMedico({ input: result.data })
             if (!newMedico) {
                 return res.status(400).json({ error: "Error al crear el médico " })
             }
@@ -63,6 +62,27 @@ export class AdminController {
         } catch (error) {
             console.error('Error al crear el médico:', error)
             res.status(500).json({ error: error.message })
+        }
+    }
+
+    static async actualizarContraseña (req, res) {
+        const { id: uuid } = req.params
+        const { password } = req.body
+
+        result = validatePasswordUpdate({ password })
+
+        if (!result.success) {
+            return res.status(400).json({ error: JSON.parse(result.error.message) })
+        }
+
+        try {
+
+            const updatedMedico = await ModeloAdmin.actualizarContraseña({ uuid, password })
+            res.status(201).json(updatedMedico)
+
+        } catch (error) {
+            console.error('Error al actualizar la contraseña:', error)
+            res.status(500).json({ error: "Error al actualizar la contraseña" })
         }
     }
 
@@ -92,7 +112,7 @@ export class AdminController {
         const { id: uuid } = req.params
 
         try {
-            const updatedMedico = await ModeloAdmin.actualizarMedico({ uuid, input: req.body })
+            const updatedMedico = await ModeloAdmin.actualizarMedico({ uuid, input: result.data })
             res.status(201).json(updatedMedico)
         } catch (error) {
             console.error('Error al actualizar el médico:', error)

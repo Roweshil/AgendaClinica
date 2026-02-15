@@ -20,6 +20,7 @@ const citaSchema = z.object({
 })
 
 
+
 export function validateCita(input) {
     return citaSchema.safeParse(input)
 }

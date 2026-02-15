@@ -40,7 +40,7 @@ export class MedicoController {
         }
 
         try {
-            const newCita = await ModeloMedico.crearCita({ input: req.body })
+            const newCita = await ModeloMedico.crearCita({ input: result.data })
             if (!newCita) {
                 return res.status(400).json({ error: "Error al crear la cita" })
             }
@@ -77,7 +77,7 @@ export class MedicoController {
 
         try {
             
-            const updatedCita = await ModeloMedico.actualizarCita({ uuid, input: req.body })
+            const updatedCita = await ModeloMedico.actualizarCita({ uuid, input: result.data })
            
             res.status(201).json(updatedCita)
         } catch (error) {
