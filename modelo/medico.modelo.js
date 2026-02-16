@@ -3,17 +3,17 @@ import crypto from "node:crypto"
 
 export class ModeloMedico {
 
-   static async crearCita({ input }) {
+   static async crearCita({ medico_Id, input }) {
     const { 
-        medico_Id,
+        paciente,
+        telefono,
         fecha, 
         hora,
-        paciente, 
         motivo,
-        google_event_id,
-        estado,
+        estado
     } = input
 
+    const google_event_id = medico_Id
     
     console.log(input);
 
@@ -21,9 +21,9 @@ export class ModeloMedico {
 
     try {
       const resultado = await db.execute(
-        `INSERT INTO citas (uuid, medico_id, fecha, hora, paciente, motivo, google_event_id, estado) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [uuid, medico_Id, fecha, hora, paciente, motivo, google_event_id, estado]
+        `INSERT INTO citas (uuid, medico_id, paciente, telefono, fecha, hora, motivo, estado, google_event_id ) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [uuid, medico_Id, paciente, telefono, fecha, hora, motivo, estado, google_event_id]
       )
     
       return uuid
@@ -34,11 +34,11 @@ export class ModeloMedico {
     }
   }
     
-  static async obtenerCitaPorId({uuid}) {
+  static async obtenerCitaPorId({medicoId, citaId}) {
     
     try {
 
-      const resultado = await db.execute('SELECT * FROM citas WHERE uuid = ?', [uuid])
+      const resultado = await db.execute('SELECT * FROM citas WHERE uuid = ? AND medico_id = ?', [citaId, medicoId])
 
       return resultado.rows[0]; 
 
@@ -48,10 +48,10 @@ export class ModeloMedico {
     }
   }
 
-  static async obtenerCitasPorMedico({uuid}) {
+  static async obtenerCitasPorMedico({medicoId}) {
 
     try {
-      const resultado = await db.execute('SELECT * FROM citas WHERE medico_id = ?', [uuid])
+      const resultado = await db.execute('SELECT * FROM citas WHERE medico_id = ?', [medicoId])
 
       return resultado.rows
       
@@ -61,12 +61,13 @@ export class ModeloMedico {
     }  
   }
 
-  static async eliminarCita({uuid}) {
+  static async eliminarCita({medicoId, citaId}) {
     
+
     try {
       const resultado = await db.execute(
-        `DELETE FROM citas WHERE uuid = ?`,
-        [uuid]
+        `DELETE FROM citas WHERE uuid = ? AND medico_id = ?`,
+        [citaId, medicoId]
       )
 
       return resultado.rowsAffected
@@ -77,13 +78,29 @@ export class ModeloMedico {
     }
   }
 
-  static async actualizarCita({ uuid, input }) {
+  static async actualizarCita({ citaId, medicoId, input }) {
+
+    const columnasPermitidas = [
+      'paciente',
+      'telefono',
+      'email', 
+      'fecha', 
+      'hora',
+      'motivo',
+      'estado'
+    ]
+
     const fields = []
     const values = []
 
+
     for (const [key, value] of Object.entries(input)) {
+
+      if (!columnasPermitidas.includes(key)) continue
+
       fields.push(`${key} = ?`)
       values.push(value)
+      
     }
 
     if (fields.length === 0) return 0
@@ -91,16 +108,17 @@ export class ModeloMedico {
     const sql = `
       UPDATE citas
       SET ${fields.join(', ')}
-      WHERE uuid = ?
+      WHERE uuid = ? AND medico_id = ?
     `
 
-    values.push(uuid)
+    values.push(citaId, medicoId)
 
     try {
 
       const result = await db.execute(sql, values)
 
-      return uuid 
+      console.log('Cita actualizada:', result)
+      return result
 
     } catch (error) {
         console.error('Error al actualizar la cita:', error)

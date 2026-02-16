@@ -17,12 +17,12 @@ export class ModeloAdmin {
     }
   }  
 
-  static async obtenerPorId({ uuid }) {
+  static async obtenerPorId({ medicoId }) {
 
     try {
       const resultado = await db.execute(
         'SELECT uuid, nombre, email, roles FROM medicos WHERE uuid = ?', 
-        [uuid]
+        [medicoId]
     )
 
       return resultado.rows[0]
@@ -38,14 +38,15 @@ export class ModeloAdmin {
 
     const { 
       nombre, 
+      apellido,
+      telefono,
       email, 
-      password, 
-      googletoken,
+      password,
       roles = 'medico'
     } = input
 
     const existing = await db.execute({
-      sql: "SELECT id FROM medicos WHERE email = ?",
+      sql: "SELECT uuid FROM medicos WHERE email = ?",
       args: [email],
     })
 
@@ -56,6 +57,7 @@ export class ModeloAdmin {
     console.log(input)
 
     const uuid = crypto.randomUUID()
+    const googletoken = uuid
 
     const saltRounds = Number(process.env.SALT_ROUNDS)
     
@@ -64,8 +66,8 @@ export class ModeloAdmin {
 
     try {
         const resultado = await db.execute(
-          `INSERT INTO medicos (uuid, nombre, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?)`,
-          [uuid, nombre, email, hashedPassword, googletoken, roles]
+          `INSERT INTO medicos (uuid, nombre, apellido, telefono, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [uuid, nombre, apellido, telefono, email, hashedPassword, googletoken, roles]
         )
 
         return uuid
@@ -77,11 +79,13 @@ export class ModeloAdmin {
 
   }
 
-  static async actualizarContraseña ({ uuid, newPassword }) {
+  static async actualizarContraseña ({ input }) {
+
+    const { uuid, password } = input
 
     const saltRounds = Number(process.env.SALT_ROUNDS)
     
-    const hashedPassword = await bcrypt.hash(newPassword, saltRounds)
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
 
     try {
         const resultado = await db.execute(
@@ -102,12 +106,12 @@ export class ModeloAdmin {
 
 
 
-  static async eliminarMedico({ uuid }) {
+  static async eliminarMedico({ medicoId }) {
 
     try {
       const resultado = await db.execute(
         `DELETE FROM medicos WHERE uuid = ?`,
-        [uuid]
+        [medicoId]
       )
       console.log(resultado.rowsAffected)
       return resultado.rowsAffected
@@ -119,11 +123,22 @@ export class ModeloAdmin {
     }
   }
 
-  static async actualizarMedico({ uuid, input }) {
+  static async actualizarMedico({ medicoId, input }) {
+
+    const columnasPermitidas = [
+    'nombre',
+    'apellido',
+    'telefono',
+    'email',
+    ]
+
     const fields = []
     const values = []
 
+
     for (const [key, value] of Object.entries(input)) {
+      if (!columnasPermitidas.includes(key)) continue
+
       fields.push(`${key} = ?`)
       values.push(value)
     }
@@ -138,12 +153,12 @@ export class ModeloAdmin {
       WHERE uuid = ?
     `
 
-    values.push(uuid)
+    values.push(medicoId)
 
     try {
 
       const result = await db.execute(sql, values)
-      return uuid
+      return medicoId
 
     } catch (error) {
         console.error('Error al actualizar el médico:', error)

@@ -1,15 +1,19 @@
 import { AuthService } from "../Services/authService.js";
+import { validateAuth } from "../schemas/auth.schema.js";
 
 
 export class AuthController {
    static async login(req, res) {
 
-        const { email, password } = req.body
-        console.log(req.body)
+        const result = validateAuth(req.body)
+
+        if (!result.success) {
+            return res.status(400).json({ error: JSON.parse(result.error.message) })
+        }
 
         try {
 
-            const { user, token } = await AuthService.login({ email, password })    
+            const { token, user } = await AuthService.login({ input: result.data })    
             res
             .cookie('access_token', token, {
                 httpOnly: true, // solo se puede acceder en el servidor

@@ -1,12 +1,41 @@
 import { ModeloMedico } from "../modelo/medico.modelo.js"
+import { ModeloAdmin } from "../modelo/admin.modelo.js"
 import { validateCita, validatePartialCita  } from "../schemas/citas.schema.js"
 
 export class MedicoController {
 
-    static async obtenerCitasPorMedico (req, res) {
-        const { id: uuid } = req.params
+    static async crearCita (req, res) {
+
+        const result = validateCita(req.body)
+
+        if (!result.success) {
+            return res.status(400).json({ error: JSON.parse(result.error.message) })
+        }
+
+        const medicoId  = req.user.id
+
         try {
-            const citas = await ModeloMedico.obtenerCitasPorMedico({uuid})
+            const newCita = await ModeloMedico.crearCita({ medico_Id: medicoId, input: result.data })
+            if (!newCita) {
+                return res.status(400).json({ error: "Error al crear la cita" })
+            }
+            res.status(201).json(newCita)
+        } catch (error) {
+            console.error('Error al crear la cita:', error)
+            res.status(500).json({ error: "Error al crear la cita i"})
+        }
+    }
+
+    static async obtenerCitasPorMedico (req, res) {
+        const medicoId = req.user.id
+
+        console.log('USER:', req.user.id)
+
+        const medico = await ModeloAdmin.obtenerPorId({medicoId})
+        if (!medico) return res.status(404).json({ error: 'Usuario no existe' })
+            
+        try {
+            const citas = await ModeloMedico.obtenerCitasPorMedico({medicoId})
 
             if (!citas || citas.length === 0) {
                 return res.status(404).json({ error: "No hay citas registradas" })
@@ -35,9 +64,12 @@ export class MedicoController {
     }
 
     static async obtenerCitaPorId(req, res) {
-        const { id: uuid } = req.params
+        const medicoId  = req.user.id
+        const { id: citaId } = req.params
+       
+        
         try {
-            const cita = await ModeloMedico.obtenerCitaPorId({uuid})
+            const cita = await ModeloMedico.obtenerCitaPorId({medicoId, citaId})
             
             if (!cita) {
                 return res.status(404).json({ error: "Cita no encontrada" })
@@ -65,59 +97,52 @@ export class MedicoController {
         }
     }
 
-    static async crearCita (req, res) {
-
-        const result = validateCita(req.body)
-
-        if (!result.success) {
-            return res.status(400).json({ error: JSON.parse(result.error.message) })
-        }
-
-        try {
-            const newCita = await ModeloMedico.crearCita({ input: result.data })
-            if (!newCita) {
-                return res.status(400).json({ error: "Error al crear la cita" })
-            }
-            res.status(201).json(newCita)
-        } catch (error) {
-            console.error('Error al crear la cita:', error)
-            res.status(500).json({ error: "Error al crear la cita i"})
-        }
-    }
-
     static async eliminarCita (req, res) {
-        const { id: uuid } = req.params
+
+        console.log('USER:', req.user)
+        console.log('PARAMS:', req.params)
+        const medicoId  = req.user.id
+        const { id: citaId } = req.params
+
         try {
-            const rowsAffected = await ModeloMedico.eliminarCita({uuid})
+            const rowsAffected = await ModeloMedico.eliminarCita({medicoId, citaId})
             if (rowsAffected === 0) {
                 return res.status(404).json({ error: "Cita no encontrada" })
             }
             res.status(204).send(console.log(rowsAffected))
         } catch (error) {
-            console.error('Error al eliminar la cita:', error)
+            console.error('Error al eliminar la cita c:', error)
             res.status(500).json({ error: "Error al eliminar la cita" })
         }
     }
 
     static async actualizarCita (req, res) {
+        
         const result = validatePartialCita(req.body)
 
         if (!result.success) {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
-        const { id: uuid } = req.params
+        const medicoId  = req.user.id
 
-        console.log(result.data)
 
         try {
-            
-            const updatedCita = await ModeloMedico.actualizarCita({ uuid, input: result.data })
-           
 
+            const { id: citaId } = req.params
+
+            const cita = await ModeloMedico.obtenerCitaPorId({medicoId, citaId})
+            if (!cita) {
+                return res.status(404).json({ error: "Cita no encontrada" })
+            }
+
+            const rowsAffected = await ModeloMedico.actualizarCita({ citaId, medicoId, input: result.data })
+            if (rowsAffected === 0) {
+                return res.status(404).json({ error: "Error al actualizar la cita" })
+            }
             res.status(200).json({
                 ok: true,
-                cita: updatedCita
+                message: "Cita actualizada correctamente"
             })
 
         } catch (error) {

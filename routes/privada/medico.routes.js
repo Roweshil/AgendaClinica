@@ -7,7 +7,7 @@ import { MedicoController } from "../../controladores/medico.controlador.js"
 
 const medicoRouter = Router()
 
-medicoRouter.get('/citas/mis-citas/:id', MedicoController.obtenerCitasPorMedico)
+medicoRouter.get('/citas/mis-citas/', MedicoController.obtenerCitasPorMedico)
 
 medicoRouter.get('/citas/consulta/:id', MedicoController.obtenerCitaPorId)
 

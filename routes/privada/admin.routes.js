@@ -18,4 +18,9 @@ adminRouter.delete('/borrar/:id', AdminController.eliminarMedico)
 
 adminRouter.patch('/actualizar/:id', AdminController.actualizarMedico)
 
+adminRouter.post('/password-reset', AdminController.actualizarContraseña)
+
 export default adminRouter
+
+// (Deshabilitadas temporalmente para pruebas)
+// adminRouter.post('/crear-admin', AdminController.crearAdmin)

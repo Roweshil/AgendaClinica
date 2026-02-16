@@ -1,5 +1,5 @@
 import { ModeloAdmin } from "../modelo/admin.modelo.js"
-import { validateMedico, validatePartialMedico } from "../schemas/medicos.schema.js"
+import { validateMedico, validatePartialMedico, validatePasswordUpdate } from "../schemas/medicos.schema.js"
 
 export class AdminController {
     static async obtenerTodos (req, res) {
@@ -29,14 +29,14 @@ export class AdminController {
 
     static async obtenerPorId (req, res) {
 
-        const { id: uuid } = req.params
+        const { id: medicoId } = req.params
 
         try {
-            const admin =  await ModeloAdmin.obtenerPorId({uuid})
-            if (!admin) {
-                return res.status(404).json({ error: "Medico no encontrado" })
+            const medico =  await ModeloAdmin.obtenerPorId({medicoId})
+            if (!medico) {
+                return res.status(404).json({ error: "médico no encontrado" })
             }
-            res.json(admin)
+            res.json(medico)
         } catch (error) {
             console.error('Error al obtener el médico por ID:', error)
             res.status(500).json({ error: "Error al obtener el médico por ID" })
@@ -50,6 +50,7 @@ export class AdminController {
         if (!result.success) {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
+        console.log('Resultado de la validación:', result)
 
         try {
             const newMedico = await ModeloAdmin.crearMedico({ input: result.data })
@@ -66,18 +67,18 @@ export class AdminController {
     }
 
     static async actualizarContraseña (req, res) {
-        const { id: uuid } = req.params
-        const { password } = req.body
+ 
 
-        result = validatePasswordUpdate({ password })
+        const result = validatePasswordUpdate(req.body)
 
         if (!result.success) {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
 
+
         try {
 
-            const updatedMedico = await ModeloAdmin.actualizarContraseña({ uuid, password })
+            const updatedMedico = await ModeloAdmin.actualizarContraseña({ input: result.data })
             res.status(201).json(updatedMedico)
 
         } catch (error) {
@@ -87,10 +88,10 @@ export class AdminController {
     }
 
     static async eliminarMedico (req, res) {
-        const { id: uuid } = req.params
+        const { id: medicoId } = req.params
         
         try {
-            const rowsAffected = await ModeloAdmin.eliminarMedico({uuid})
+            const rowsAffected = await ModeloAdmin.eliminarMedico({medicoId})
             if (rowsAffected === 0) {
                 res.status(404).send("Médico no encontrado")
             }
@@ -103,6 +104,7 @@ export class AdminController {
     }
 
     static async actualizarMedico (req, res) {
+
         const result = validatePartialMedico(req.body)
 
         if (!result.success) {

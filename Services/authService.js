@@ -5,10 +5,14 @@ import { ModeloAuth } from '../modelo/auth.modelo.js'
 
 export class AuthService {
 
-  static async login({ email, password }) {
+  static async login({ input }) {
 
+    const { email, password } = input
 
-    const user = await ModeloAuth.buscarPorEmail(email)
+    const user =
+      (await ModeloAuth.buscarPorAdmin(email)) ??
+      (await ModeloAuth.buscarPorEmail(email))
+      
     // uuid, email, password, rol
     if (!user) {
       throw new Error('Credenciales inválidas')
@@ -29,9 +33,9 @@ export class AuthService {
     return {
       token,
       user: {
-        id: user.uuid,
-        email: user.email,
-        rol: user.rol
+        ok: "Autenticacion exitosa",
+        email: user.email
+        
       }
     }
   }

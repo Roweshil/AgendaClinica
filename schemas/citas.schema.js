@@ -1,24 +1,25 @@
-import z, { uuid } from 'zod'
+import z from 'zod'
 
 const citaSchema = z.object({
-    medico_Id: z.string({
-        invalid_type_error: 'id debe ser string',
-        required_error: 'el id es requerido'
-    }),
+    paciente: z.string().min(2).max(100),
+    telefono: z.string().min(10).max(20),
     fecha: z.string({
         invalid_type_error: 'fecha debe ser en formato string',
         required_error: 'fecha es requerida'
     }),
     hora: z.string({
         invalid_type_error: 'la hora es necesaria',
-        required_error: 'hora es requerida'
+        required_error: 'hora es requerida',
     }),
-    paciente: z.string().min(2).max(100),
-    motivo: z.string().min(2).max(255),
-    google_event_id: z.string().optional(),
-    estado: z.string().min(2).max(50),
+    motivo: z.string({
+        invalid_type_error: 'el motivo es necesario',
+        required_error: 'el motivo es requerido',
+    }).min(2).max(255),
+    estado: z.string({
+        invalid_type_error: 'el estado es necesario',
+        required_error: 'el estado es requerido'
+    }).min(2).max(50)
 })
-
 
 
 export function validateCita(input) {
