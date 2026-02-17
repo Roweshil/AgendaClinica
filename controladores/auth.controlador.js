@@ -1,5 +1,6 @@
 import { AuthService } from "../Services/authService.js";
 import { validateAuth } from "../schemas/auth.schema.js";
+import { BadRequestError } from "../utils/app.error.js";
 
 
 export class AuthController {

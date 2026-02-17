@@ -24,6 +24,13 @@ const citaSchema = z.object({
     }).min(2).max(50)
 })
 
+const IdParamSchema = z.object({
+    id: z.string({
+        invalid_type_error: 'id debe ser un string',
+        required_error: 'id es requerido'
+    })
+})
+
 
 export function validateCita(input) {
     return citaSchema.safeParse(input)
@@ -31,6 +38,10 @@ export function validateCita(input) {
 
 export function validatePartialCita(input) {
     return citaSchema.partial().safeParse(input)
+}
+
+export function validateIdParam (input) {
+    return IdParamSchema.safeParse(input)
 }
 
 

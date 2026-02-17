@@ -1,5 +1,5 @@
 import { ModeloAdmin } from "../modelo/admin.modelo.js"
-import { validateMedico, validatePartialMedico, validatePasswordUpdate } from "../schemas/medicos.schema.js"
+import { validateMedico, validatePartialMedico, validatePasswordUpdate, validateIdParam } from "../schemas/medicos.schema.js"
 import { BadRequestError, NotFoundError } from "../utils/app.error.js"
 
 export class AdminController {
@@ -36,7 +36,11 @@ export class AdminController {
 
     static async obtenerPorId (req, res) {
 
-        const { id: medicoId } = req.params
+        const result = validateIdParam(req.params)
+
+        if (!result.success) throw new BadRequestError('ID inválido')
+
+        const { id: medicoId } = result.data
 
         const medico = await ModeloAdmin.obtenerPorId({medicoId})  
 

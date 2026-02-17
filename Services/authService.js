@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import { UnathorizedError } from '../utils/app.error.js'
 
 import { ModeloAuth } from '../modelo/auth.modelo.js'
 

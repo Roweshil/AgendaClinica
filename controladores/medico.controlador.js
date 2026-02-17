@@ -1,6 +1,6 @@
 import { ModeloMedico } from "../modelo/medico.modelo.js"
 import { ModeloAdmin } from "../modelo/admin.modelo.js"
-import { validateCita, validatePartialCita  } from "../schemas/citas.schema.js"
+import { validateCita, validatePartialCita, validateIdParam  } from "../schemas/citas.schema.js"
 import { BadRequestError, NotFoundError } from "../utils/app.error.js"
 
 export class MedicoController {
@@ -51,8 +51,13 @@ export class MedicoController {
     }
 
     static async obtenerCitaPorId(req, res) {
+
+        const result = validateIdParam(req.params)
+        if (!result.success) throw new BadRequestError('ID inválido')
+
+        const { id: citaId } = result.data
+
         const medicoId  = req.user.id
-        const { id: citaId } = req.params
     
         const cita = await ModeloMedico.obtenerCitaPorId({medicoId, citaId})
         

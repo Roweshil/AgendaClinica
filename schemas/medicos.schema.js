@@ -16,6 +16,13 @@ const passwordUpdateSchema = z.object({
     }).min(8).max(50)
 })
 
+const IdParamSchema = z.object({
+    id: z.string({
+        invalid_type_error: 'ID debe ser un string',
+        required_error: 'ID es requerido'
+    })
+})
+
 export function validateMedico (input) {
     return medicoSchema.safeParse(input)
 }
@@ -26,4 +33,8 @@ export function validatePartialMedico (input) {
 
 export function validatePasswordUpdate (input) {
     return passwordUpdateSchema.safeParse(input)
+}
+
+export function validateIdParam (input) {
+    return IdParamSchema.safeParse(input)
 }
