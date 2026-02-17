@@ -14,15 +14,11 @@ export class AuthService {
       (await ModeloAuth.buscarPorEmail(email))
       
     // uuid, email, password, rol
-    if (!user) {
-      throw new Error('Credenciales inválidas')
-    }
+    if (!user) throw new UnathorizedError('Credenciales inválidas')
 
     const isValid = await bcrypt.compare(password, user.hashedPassword)
 
-    if (!isValid) {
-      throw new Error('Credenciales inválidas')
-    }
+    if (!isValid) throw new UnathorizedError('Credenciales inválidas')
 
     const token = jwt.sign(
       { id: user.uuid, rol: user.roles },

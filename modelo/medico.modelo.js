@@ -1,5 +1,6 @@
 import { db } from "../DB/turso.js"
 import crypto from "node:crypto"
+import {mapDatabaseError, NotFoundError } from "../utils/app.error.js"
 
 export class ModeloMedico {
 
@@ -13,9 +14,7 @@ export class ModeloMedico {
         estado
     } = input
 
-    const google_event_id = medico_Id
-    
-    console.log(input);
+    const google_event_id = crypto.randomUUID()
 
     const uuid = crypto.randomUUID()
 
@@ -26,11 +25,10 @@ export class ModeloMedico {
         [uuid, medico_Id, paciente, telefono, fecha, hora, motivo, estado, google_event_id]
       )
     
-      return uuid
+      return resultado.rows[0]
     
     } catch (error) {
-      console.error('Error al crear la cita:', error);
-      throw error;
+      throw mapDatabaseError(error)
     }
   }
     
@@ -43,8 +41,7 @@ export class ModeloMedico {
       return resultado.rows[0]; 
 
     } catch (error) {
-      console.error('Error al obtener la cita por ID:', error)
-      throw error
+      throw mapDatabaseError(error)
     }
   }
 
@@ -56,8 +53,7 @@ export class ModeloMedico {
       return resultado.rows
       
     } catch (error) {
-      console.error('Error al obtener las citas por médico:', error)
-      throw error
+      throw new NotFoundError('No se encontraron citas para este médico')
     }  
   }
 
@@ -73,8 +69,7 @@ export class ModeloMedico {
       return resultado.rowsAffected
 
     } catch (error) {
-      console.error('Error al eliminar la cita:', error);
-      throw error
+      throw mapDatabaseError(error)
     }
   }
 
@@ -121,8 +116,7 @@ export class ModeloMedico {
       return result
 
     } catch (error) {
-        console.error('Error al actualizar la cita:', error)
-        throw error
+        throw mapDatabaseError(error)
       }
   }
   

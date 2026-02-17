@@ -1,9 +1,51 @@
 import { db } from "../DB/turso.js"
 import crypto from "node:crypto"
 import bcrypt from 'bcrypt'
+import { ConflictError } from "../utils/app.error.js"
+// import {mapDatabaseError} from "../utils/app.error.js"
 
 
 export class ModeloAdmin {
+
+   static async crearMedico({ input }) {
+
+    const { 
+      nombre, 
+      apellido,
+      telefono,
+      email, 
+      password,
+      roles = 'medico'
+    } = input
+
+    try {
+
+      const existing = await db.execute({
+        sql: "SELECT uuid FROM medicos WHERE email = ?",
+        args: [email],
+      })
+
+      if (existing.rows.length > 0) throw new ConflictError("Usuario ya registrado")
+
+      const uuid = crypto.randomUUID()
+
+      const googletoken = uuid
+
+      const saltRounds = Number(process.env.SALT_ROUNDS)
+      
+      const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+      const resultado = await db.execute(
+        `INSERT INTO medicos (uuid, nombre, apellido, telefono, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [uuid, nombre, apellido, telefono, email, hashedPassword, googletoken, roles]
+      )
+
+      return uuid
+      
+    } catch (error) {
+        throw mapDatabaseError(error)
+    }
+  }
 
   static async obtenerTodos() {
 
@@ -12,8 +54,7 @@ export class ModeloAdmin {
 
       return resultado.rows
     } catch (error) {
-      console.error('Error al obtener los médicos:', error)
-      throw error
+      throw mapDatabaseError(error)
     }
   }  
 
@@ -29,55 +70,11 @@ export class ModeloAdmin {
 
 
     } catch (error) {
-      console.error('Error al obtener el médico por ID:', error)
-      throw error
+      throw mapDatabaseError(error)
     }
   }
 
-  static async crearMedico({ input }) {
-
-    const { 
-      nombre, 
-      apellido,
-      telefono,
-      email, 
-      password,
-      roles = 'medico'
-    } = input
-
-    const existing = await db.execute({
-      sql: "SELECT uuid FROM medicos WHERE email = ?",
-      args: [email],
-    })
-
-    if (existing.rows.length > 0) {
-        throw new Error("Usuario ya registrado")
-    }
-
-    console.log(input)
-
-    const uuid = crypto.randomUUID()
-    const googletoken = uuid
-
-    const saltRounds = Number(process.env.SALT_ROUNDS)
-    
-    const hashedPassword = await bcrypt.hash(password, saltRounds)
-
-
-    try {
-        const resultado = await db.execute(
-          `INSERT INTO medicos (uuid, nombre, apellido, telefono, email, hashedPassword, googletoken, roles) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [uuid, nombre, apellido, telefono, email, hashedPassword, googletoken, roles]
-        )
-
-        return uuid
-    
-    } catch (error) {
-        console.error('Error al crear el médico m:', error)
-        throw error
-    }
-
-  }
+ 
 
   static async actualizarContraseña ({ input }) {
 
@@ -96,8 +93,7 @@ export class ModeloAdmin {
         return uuid
     
     } catch (error) {
-        console.error('Error al actualizar contraseña del médico:', error)
-        throw error
+        throw mapDatabaseError(error)
     }
   
   }
@@ -113,13 +109,12 @@ export class ModeloAdmin {
         `DELETE FROM medicos WHERE uuid = ?`,
         [medicoId]
       )
-      console.log(resultado.rowsAffected)
+
       return resultado.rowsAffected
 
 
     } catch (error) {
-      console.error('Error al eliminar el médico:', error)
-      throw error
+      throw mapDatabaseError(error)
     }
   }
 
@@ -161,9 +156,8 @@ export class ModeloAdmin {
       return medicoId
 
     } catch (error) {
-        console.error('Error al actualizar el médico:', error)
-        throw error
-      }
+        throw mapDatabaseError(error)
+    }
   }
 
 }

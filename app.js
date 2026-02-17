@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
 
 import adminRouter from './routes/privada/admin.routes.js'
 import medicoRouter from './routes/privada/medico.routes.js'
@@ -12,15 +13,38 @@ import sanitizeMiddleware from './utils/sanitizador.js'
 dotenv.config()
 
 const app = express()
+app.use(helmet()) // para seguridad HTTP headers
+
 app.use(cookieParser())
 
 app.use(express.json({ limit: '10kb' })) // para parsear JSON con un límite de tamaño
 app.disable('x-powered-by') // deshabilitar el header X-Powered-By: Express
 
-app.use(sanitizeMiddleware) // Middleware de sanitización para todas las rutas
 app.use('/api/', authRouter)
-app.use('/api/admin', authMiddleware, rolesAutorizados('admin'), adminRouter)
-app.use('/api/medico', authMiddleware, rolesAutorizados('admin', 'medico'), medicoRouter)
+app.use('/api/admin', sanitizeMiddleware, authMiddleware, rolesAutorizados('admin'), adminRouter)
+app.use('/api/medico', sanitizeMiddleware, authMiddleware, rolesAutorizados('admin', 'medico'), medicoRouter)
+
+
+
+// Manejo de rutas no encontradas
+/*app.all('/{path}', (req, res) => { 
+  res.status(404).sendFile(path.join(__dirname, 'vistas', '404.html')); 
+               
+})*/
+
+app.use((err, req, res, next) => {
+  if (err.isOperational) {
+    return res.status(err.statusCode).json({
+      error: err.message
+    })
+  }
+
+  console.error(err)
+
+  res.status(500).json({
+    error: 'Error interno del servidor'
+  })
+})
 
 const PORT = process.env.PORT ?? 1234
 

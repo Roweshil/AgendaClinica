@@ -2,7 +2,10 @@ import z from 'zod'
 
 const citaSchema = z.object({
     paciente: z.string().min(2).max(100),
-    telefono: z.string().min(10).max(20),
+    telefono: z.string({
+        invalid_type_error: 'telefono debe ser en formato string',
+        required_error: 'telefono es requerido'
+    }).min(10).max(20),
     fecha: z.string({
         invalid_type_error: 'fecha debe ser en formato string',
         required_error: 'fecha es requerida'

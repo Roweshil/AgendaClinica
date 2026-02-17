@@ -13,8 +13,7 @@ export class ModeloAuth {
             return result.rows[0]
 
         } catch (error) {
-            console.error('Error al buscar usuario por email:', error)
-            throw error
+            throw mapDatabaseError(error)
         }
         
     }
@@ -30,8 +29,7 @@ export class ModeloAuth {
             return result.rows[0]
 
         } catch (error) {
-            console.error('Error al buscar usuario por email:', error)
-            throw error
+            throw mapDatabaseError(error)
         }
         
     } 

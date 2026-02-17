@@ -1,4 +1,4 @@
-import z   from 'zod'
+import z from 'zod'
 
 const authSchema = z.object({
     email: z.string().min(5).max(100),

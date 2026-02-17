@@ -7,25 +7,20 @@ export class AuthController {
 
         const result = validateAuth(req.body)
 
-        if (!result.success) {
-            return res.status(400).json({ error: JSON.parse(result.error.message) })
-        }
+        if (!result.success) throw new BadRequestError('Verificar datos de autenticación')
 
-        try {
 
-            const { token, user } = await AuthService.login({ input: result.data })    
-            res
-            .cookie('access_token', token, {
-                httpOnly: true, // solo se puede acceder en el servidor
-                secure: process.env.NODE_ENV === 'production', // la cookie solo se puede acceder en https
-                sameSite: 'strict',  //la cookie solo se puede acceder en el mismo dominio
-                maxAge: 3600000 // validez durante 1 hora
-            })
-            .json({ user })
+        const { token, user } = await AuthService.login({ input: result.data })   
+            
+        res
+        .cookie('access_token', token, {
+            httpOnly: true, // solo se puede acceder en el servidor
+            secure: process.env.NODE_ENV === 'production', // la cookie solo se puede acceder en https
+            sameSite: 'strict',  //la cookie solo se puede acceder en el mismo dominio
+            maxAge: 3600000 // validez durante 1 hora
+        })
+        .json({ user })
 
-        } catch (error) {
-                res.status(401).json({ error: error.message })
-            }
     }
 
     static logout(req, res) {
