@@ -69,3 +69,19 @@
  
 
     }*/
+
+
+
+        /*
+
+"start": {
+ "dateTime": "2015-09-15T06:00:00+02:00",
+ "timeZone": "Europe/Zurich"
+},
+"end": {
+ "dateTime": "2015-09-15T07:00:00+02:00",
+ "timeZone": "Europe/Zurich"
+},
+"recurrence": [
+ "RRULE:FREQ=WEEKLY;COUNT=5;BYDAY=TU,FR"
+], */

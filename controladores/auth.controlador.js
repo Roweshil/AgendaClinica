@@ -16,7 +16,7 @@ export class AuthController {
         res
         .cookie('access_token', token, {
             httpOnly: true, // solo se puede acceder en el servidor
-            secure: process.env.NODE_ENV === 'production', // la cookie solo se puede acceder en https
+            secure: false,//process.env.NODE_ENV === 'production', // la cookie solo se puede acceder en https
             sameSite: 'strict',  //la cookie solo se puede acceder en el mismo dominio
             maxAge: 3600000 // validez durante 1 hora
         })

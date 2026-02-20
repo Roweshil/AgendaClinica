@@ -99,9 +99,6 @@ export class ModeloAdmin {
   }
 
 
-
-
-
   static async eliminarMedico({ medicoId }) {
 
     try {
