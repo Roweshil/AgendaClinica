@@ -4,6 +4,7 @@ import { apiFetch } from "../api/client";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // 🔑 Auto-login al recargar
+  // Auto-login al recargar
   useEffect(() => {
     const validate = async () => {
       try {

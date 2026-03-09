@@ -1,42 +1,48 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.container{
+  background-color: rgb(166, 209, 207);
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 8fr 1fr;
+  grid-template-areas: 
+    "header"
+    "viewport"
+    "footer";
+  font-family: sans-serif;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.header {
+  background-color: aliceblue;
+  grid-area: header;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.main {
+  grid-area: viewport;
+  display: grid;
+  grid-template-columns: 1fr 9fr;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.container .sidebar {
+  background-color: rgb(41, 88, 128);
+  height: 100%;
 }
 
-.card {
-  padding: 2em;
+.sidebar nav{
+  background-color: rgb(41, 88, 128);
+  height: 100%;
 }
 
-.read-the-docs {
-  color: #888;
+
+
+
+.footer {
+  grid-area: footer;
+  background-color: rgb(200, 205, 209);
+  min-height: 10vh;
 }
