@@ -1,9 +1,9 @@
-.container{
+.layout {
   background-color: rgb(166, 209, 207);
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 8fr 1fr;
+  grid-template-rows: 1fr 12fr 1fr;
   grid-template-areas: 
     "header"
     "viewport"
@@ -14,35 +14,66 @@
 .header {
   background-color: aliceblue;
   grid-area: header;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-content: center;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  border-bottom: 1px solid black;
 }
 
-.main {
+.header nav {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+main {
   grid-area: viewport;
   display: grid;
   grid-template-columns: 1fr 9fr;
 }
 
-.container .sidebar {
-  background-color: rgb(41, 88, 128);
+.sidebar {
+  background-color: rgb(182, 194, 204);
   height: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid black;
 }
 
-.sidebar nav{
-  background-color: rgb(41, 88, 128);
-  height: 100%;
+.sidebar ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  gap: 9rem;
 }
 
+.sidebar ul li {
+  color: black;
+  border: 1px solid rgb(47, 179, 212);
+  border-radius: 15px;
+  padding: 1rem;
+}
 
-
+.content {
+  background-color: rgb(73, 114, 148);
+  height: 100%;
+  padding: 2rem;
+}
 
 .footer {
   grid-area: footer;
+  padding: 1rem;
   background-color: rgb(200, 205, 209);
-  min-height: 10vh;
+}
+
+.footer nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rem;
 }

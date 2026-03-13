@@ -1,5 +1,6 @@
 import './App.css'
 
+
 /*import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./auth/AuthContext"
 import { ProtectedRoute } from "./routes/ProtectedRoute"
@@ -11,12 +12,18 @@ import Medico from "./pages/Medico"*/
 
 function App() {
   return (
-      <div className='container'>
+      <div className='layout'>
         <header className="header">
-          <h1>Agenda Clinica RoweApps</h1>
+          <h1>RoweApps</h1>
+          <nav>
+              <a href="#home">Home</a>
+              <a href="Contacto">Contacto</a>
+              <a href="Logout">Logout</a>
+          </nav>
         </header>
-        <main className="main">
+        <main>
           <aside className="sidebar">
+            <h2>Mi sistema</h2>
             <nav>
               <ul>
                 <li><a href="#home">Home</a></li>
@@ -28,7 +35,8 @@ function App() {
           </aside>
           <section className="content">
             <article>
-              <p>Bienvenido a la Agenda Clinica RoweApps</p>
+              <h2>Bienvenido a la Agenda Clinica RoweApps</h2>
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Pariatur atque eum iste, labore dignissimos voluptatum qui eveniet voluptas quisquam est cumque necessitatibus alias suscipit. Soluta fugit totam perspiciatis a ut!</p>
             </article>
           </section>
 

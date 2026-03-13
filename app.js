@@ -21,7 +21,7 @@ app.use(express.json({ limit: '10kb' })) // para parsear JSON con un límite de 
 app.disable('x-powered-by') // deshabilitar el header X-Powered-By: Express
 
 app.use('/api/', sanitizeMiddleware, authRouter)
-app.use('/api/admin', sanitizeMiddleware, authMiddleware, rolesAutorizados('admin'), adminRouter)
+app.use('/api/admin', adminRouter)
 app.use('/api/medico', sanitizeMiddleware, authMiddleware, rolesAutorizados('admin', 'medico'), medicoRouter)
 
 
