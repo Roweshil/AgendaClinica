@@ -9,11 +9,13 @@ import authRouter from './routes/publica/routes.js'
 import authMiddleware from './middlewares/authMiddleware.js'
 import rolesAutorizados  from './middlewares/roleMiddleware.js'
 import sanitizeMiddleware from './utils/sanitizador.js'
+import { corsMiddleware } from './middlewares/cors.js'
 
 dotenv.config()
 
 const app = express()
 app.use(helmet()) // para seguridad HTTP headers
+app.use(corsMiddleware()) // para manejar CORS
 
 app.use(cookieParser())
 

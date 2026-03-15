@@ -1,5 +1,5 @@
 import './App.css'
-
+import { useState, useEffect } from 'react'
 
 /*import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./auth/AuthContext"
@@ -10,7 +10,26 @@ import Dashboard from "./pages/Dashboard"
 import Admin from "./pages/Admin"
 import Medico from "./pages/Medico"*/
 
+
+
 function App() {
+
+  const [users, setUsers] = useState("")
+
+  
+
+  useEffect(() => {
+    const getAll = async () => {
+      const res = await fetch("http://localhost:3050/api/admin/consulta/")
+      const data = await res.json()
+      console.log(data.users)
+      setUsers(data.users)
+    } 
+    console.log(Array.isArray(users))
+    getAll()
+  }, [])
+  
+
   return (
       <div className='layout'>
         <header className="header">
@@ -36,7 +55,9 @@ function App() {
           <section className="content">
             <article>
               <h2>Bienvenido a la Agenda Clinica RoweApps</h2>
-              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Pariatur atque eum iste, labore dignissimos voluptatum qui eveniet voluptas quisquam est cumque necessitatibus alias suscipit. Soluta fugit totam perspiciatis a ut!</p>
+              <ul>
+                  
+              </ul>
             </article>
           </section>
 
